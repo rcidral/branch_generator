@@ -14,7 +14,7 @@ const App = () => {
     const branch = slugify(text, {
       lowercase: true,
       separator: "_",
-    });
+    }).replace(/_-_/g, "_");
 
     setDev(com + "_" + branch + "_dev");
     setStaging(com + "_" + branch + "_staging");
