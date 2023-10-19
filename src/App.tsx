@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { slugify } from "transliteration";
+import { ClipboardIcon } from "lucide-react";
 
 const App = () => {
   const [text, setText] = useState("");
   const [com, setCom] = useState("");
   const [dev, setDev] = useState("");
   const [staging, setStaging] = useState("");
+  const devRef = useRef<HTMLParagraphElement>(null);
+  const stagingRef = useRef<HTMLParagraphElement>(null);
 
   const generateBranch = () => {
     const branch = slugify(text, {
@@ -15,6 +18,13 @@ const App = () => {
 
     setDev(com + "_" + branch + "_dev");
     setStaging(com + "_" + branch + "_staging");
+  };
+
+  const copyToClipboard = (ref: React.RefObject<HTMLParagraphElement>) => {
+    if (ref.current) {
+      const text = ref.current.innerText;
+      navigator.clipboard.writeText(text);
+    }
   };
 
   return (
@@ -54,12 +64,30 @@ const App = () => {
       </div>
       {dev && (
         <div className="flex flex-col justify-center items-center gap-6">
-          <p className="w-[200px] md:w-[600px] md:h-[40px] p-2 rounded-md bg-zinc-50 text-[#282C34]">
-            {dev}
-          </p>
-          <p className="w-[200px] md:w-[600px] md:h-[40px] p-2 rounded-md bg-zinc-50 text-[#282C34]">
-            {staging}
-          </p>
+          <div className="flex justify-center items-center gap-2">
+            <p
+              ref={devRef}
+              className="w-auto md:h-[40px] p-2 rounded-md bg-zinc-50 text-[#282C34]"
+            >
+              {dev}
+            </p>
+            <ClipboardIcon
+              className="cursor-pointer"
+              onClick={() => copyToClipboard(devRef)}
+            />
+          </div>
+          <div className="flex justify-center items-center gap-2">
+            <p
+              ref={stagingRef}
+              className="w-auto md:h-[40px] p-2 rounded-md bg-zinc-50 text-[#282C34]"
+            >
+              {staging}
+            </p>
+            <ClipboardIcon
+              className="cursor-pointer"
+              onClick={() => copyToClipboard(stagingRef)}
+            />
+          </div>
         </div>
       )}
     </div>
